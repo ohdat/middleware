@@ -1,4 +1,4 @@
-package middleware
+package grpc_middleware
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
 //Auth grpc Auth 中间件
 func Auth(ctx context.Context) (context.Context, error) {
 	token, err := auth.AuthFromMD(ctx, "bearer")

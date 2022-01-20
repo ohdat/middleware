@@ -1,4 +1,4 @@
-module github.com/ohdat/grpc-middleware
+module github.com/ohdat/grpc_middleware
 
 go 1.16
 

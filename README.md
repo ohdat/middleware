@@ -3,6 +3,6 @@
 如何使用
 
 ```
-  go add github.com/ohdat/grpc_middleware
+  go get github.com/ohdat/grpc_middleware
 
 ```

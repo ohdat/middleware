@@ -1,8 +1,8 @@
-# grpc_middleware
+# middleware
 
 如何使用
 
 ```
-  go get github.com/ohdat/grpc_middleware
+  go get github.com/ohdat/middleware
 
 ```

@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io/ioutil"
 	"time"
 )
+
 // GinZap returns a gin.HandlerFunc (middleware) that logs requests using uber-go/zap.
 //
 // Requests with errors are logged using zap.Error().
@@ -40,12 +40,13 @@ func GinZap(logger *zap.Logger) gin.HandlerFunc {
 		if c.Request.Body != nil {
 			bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
 			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
-			fmt.Println("bodyBytes:", string(bodyBytes))
 		}
 		c.Next()
 		end := time.Now()
 		latency := end.Sub(start)
 
+		var requestId = c.GetHeader("X-Request-Id")
+		var traceId = c.GetHeader("X-B3-Traceid")
 		if len(c.Errors) > 0 {
 			// Append error field if this is an erroneous request.
 			for _, e := range c.Errors.Errors() {
@@ -61,9 +62,15 @@ func GinZap(logger *zap.Logger) gin.HandlerFunc {
 				zap.String("user-agent", c.Request.UserAgent()),
 				zap.Duration("latency", latency),
 				zap.Time("time", end),
+				zap.String("request-id", requestId),
+				zap.String("trace-id", traceId),
 				zap.String("request-body", string(bodyBytes)),
 				zap.String("response", response.body.String()),
 			}
+			if remoteIp, ok := c.RemoteIP(); ok {
+				fields = append(fields, zap.String("remote-ip", remoteIp.String()))
+			}
+
 			logger.Info(path, fields...)
 		}
 	}

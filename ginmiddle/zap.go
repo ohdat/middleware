@@ -1,8 +1,7 @@
-package middleware
+package ginmiddle
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -45,10 +44,6 @@ func GinZap(logger *zap.Logger) gin.HandlerFunc {
 		c.Next()
 		end := time.Now()
 		latency := end.Sub(start)
-
-		var heaader = c.Request.Header
-		fmt.Printf("heaader :%+v", heaader)
-
 		var requestId = c.GetHeader("X-Request-Id")
 		var traceId = c.GetHeader("X-B3-Traceid")
 		if len(c.Errors) > 0 {
